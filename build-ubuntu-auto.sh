@@ -1,128 +1,105 @@
 #!/bin/bash
-# build-ubuntu-auto.sh
-# Génère une ISO Ubuntu Desktop automatisée avec preseed
-# Compatible BIOS + UEFI ou UEFI-only
-# Usage : ./build-ubuntu-auto.sh /chemin/vers/ubuntu-original.iso [preseed.cfg]
+set -e
 
-set -euo pipefail
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <ubuntu.iso>"
+  exit 1
+fi
 
 ISO_ORIG="$1"
-PRESEED="${2:-}"
-
-if [[ -z "$ISO_ORIG" || ! -f "$ISO_ORIG" ]]; then
-    echo "Usage: $0 /chemin/vers/ubuntu-original.iso [preseed.cfg]"
-    exit 1
-fi
-
 WORKDIR=$(mktemp -d)
-ISO_DIR="$WORKDIR/iso"
-MNT_DIR="$WORKDIR/mnt"
-OUTPUT="$PWD/ubuntu-auto.iso"
+MNT="$WORKDIR/mnt"
+ISODIR="$WORKDIR/iso"
+OUTPUT="$(pwd)/ubuntu-auto.iso"
 
-mkdir -p "$ISO_DIR" "$MNT_DIR"
+echo "[1/6] Montage de l'ISO originale..."
+mkdir -p "$MNT" "$ISODIR"
+sudo mount -o loop "$ISO_ORIG" "$MNT"
 
-echo "[1/7] Montage de l'ISO originale..."
-sudo mount -o loop "$ISO_ORIG" "$MNT_DIR"
+echo "[2/6] Copie du contenu de l'ISO..."
+rsync -a "$MNT/" "$ISODIR/"
+sudo umount "$MNT"
 
-echo "[2/7] Copie du contenu de l'ISO..."
-rsync -a "$MNT_DIR/" "$ISO_DIR/"
-sudo umount "$MNT_DIR"
-
-echo "[3/7] Création ou copie du fichier preseed..."
-mkdir -p "$ISO_DIR/preseed"
-
-if [[ -z "$PRESEED" ]]; then
-    echo "Création d'un preseed minimal par défaut..."
-    cat > "$ISO_DIR/preseed/custom.cfg" <<EOL
-d-i debian-installer/locale string fr_FR.UTF-8
-d-i console-setup/ask_detect boolean false
-d-i keyboard-configuration/layoutcode string fr
+echo "[3/6] Création du fichier preseed..."
+mkdir -p "$ISODIR/preseed"
+cat > "$ISODIR/preseed/custom.cfg" <<'EOF'
+### Preseed minimal ###
+d-i debconf/frontend string noninteractive
+d-i auto-install/enable boolean true
+d-i debconf/priority string critical
 d-i time/zone string Europe/Paris
-d-i partman-auto/method string regular
-d-i partman-auto/choose_recipe select atomic
-d-i partman-auto/confirm boolean true
-d-i partman/confirm_nooverwrite boolean true
-d-i passwd/user-fullname string Utilisateur
-d-i passwd/username string user
-d-i passwd/user-password password user123
-d-i passwd/user-password-again password user123
-tasksel tasksel/first multiselect standard, ubuntu-desktop
-d-i pkgsel/include string openssh-server vim htop curl git
-d-i preseed/late_command string \
-    in-target systemctl disable cups.service; \
-    in-target systemctl disable avahi-daemon.service; \
-    in-target echo "Installation auto terminée." > /home/user/INSTALL_OK.txt
-EOL
-    echo "Preseed par défaut créé."
+d-i keyboard-configuration/xkb-keymap select fr
+d-i netcfg/get_hostname string ubuntu-auto
+d-i netcfg/choose_interface select auto
+d-i mirror/http/hostname string archive.ubuntu.com
+d-i mirror/http/directory string /ubuntu
+d-i passwd/user-fullname string Auto User
+d-i passwd/username string auto
+d-i passwd/user-password password auto
+d-i passwd/user-password-again password auto
+d-i pkgsel/include string ubuntu-desktop openssh-server vim htop curl git
+d-i finish-install/reboot_in_progress note
+EOF
+echo "Preseed créé : $ISODIR/preseed/custom.cfg"
+
+echo "[4/6] Modification du GRUB..."
+for GRUBCFG in $(find "$ISODIR/boot/grub" -name grub.cfg); do
+  cp "$GRUBCFG" "$GRUBCFG.bak"
+  sed -i '/menuentry "Try or Install Ubuntu"/,/initrd/ s@initrd.*@initrd  /casper/initrd\n    linux   /casper/vmlinuz auto=true priority=critical file=/cdrom/preseed/custom.cfg@' "$GRUBCFG"
+done
+echo "GRUB modifié."
+
+echo "[5/6] Vérification du mode boot..."
+if [ -f "$ISODIR/isolinux/isolinux.bin" ]; then
+  MODE="BIOS+UEFI"
+elif [ -f "$ISODIR/boot/grub/efi.img" ]; then
+  MODE="UEFI-img"
 else
-    if [[ ! -f "$PRESEED" ]]; then
-        echo "Erreur : fichier preseed non trouvé"
-        exit 1
-    fi
-    cp "$PRESEED" "$ISO_DIR/preseed/custom.cfg"
-    echo "Preseed personnalisé copié."
+  MODE="UEFI-bootx64"
 fi
+echo "Mode détecté : $MODE"
 
-echo "[4/7] Modification du GRUB..."
-GRUB="$ISO_DIR/boot/grub/grub.cfg"
-if [[ -f "$GRUB" ]]; then
-    sed -i '/linux\s\+\/casper\/vmlinuz/ s/---/file=\/cdrom\/preseed\/custom.cfg auto=true priority=critical ---/' "$GRUB"
-    echo "GRUB modifié."
-else
-    echo "GRUB non trouvé, vérifiez l'ISO"
-fi
-
-echo "[5/7] Modification isolinux (BIOS si présent)..."
-ISOLINUX="$ISO_DIR/isolinux/txt.cfg"
-if [[ -f "$ISOLINUX" ]]; then
-    sed -i '/^append/ s/initrd=\/casper\/initrd/& file=\/cdrom\/preseed\/custom.cfg auto=true priority=critical/' "$ISOLINUX"
-    echo "isolinux modifié."
-fi
-
-# Détection type de boot
-UEFI_BOOT=false
-BIOS_BOOT=false
-[[ -f "$ISO_DIR/EFI/boot/bootx64.efi" ]] && UEFI_BOOT=true
-[[ -f "$ISO_DIR/isolinux/isolinux.bin" ]] && BIOS_BOOT=true
-
-echo "[6/7] Création de l'ISO bootable..."
-
-if $BIOS_BOOT && $UEFI_BOOT; then
-    echo "ISO BIOS + UEFI détectée"
-    xorriso -as mkisofs -r -V "Ubuntu-Auto" \
+echo "[6/6] Création de l'ISO bootable..."
+case $MODE in
+  "BIOS+UEFI")
+    xorriso -as mkisofs \
+      -r -V "Ubuntu-Auto" \
       -o "$OUTPUT" \
-      -J -l -iso-level 3 -D \
+      -J -l -cache-inodes -iso-level 3 \
+      -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+      -partition_offset 16 \
       -b isolinux/isolinux.bin \
-      -c isolinux/boot.cat \
-      -no-emul-boot -boot-load-size 4 -boot-info-table \
+         -c isolinux/boot.cat \
+         -no-emul-boot -boot-load-size 4 -boot-info-table \
       -eltorito-alt-boot \
-      -e EFI/boot/bootx64.efi \
-      -no-emul-boot \
-      "$ISO_DIR"
-elif $UEFI_BOOT; then
-    echo "ISO UEFI only détectée"
-    xorriso -as mkisofs -r -V "Ubuntu-Auto" \
+         -e boot/grub/efi.img \
+         -no-emul-boot \
+      "$ISODIR"
+    ;;
+  "UEFI-img")
+    xorriso -as mkisofs \
+      -r -V "Ubuntu-Auto" \
       -o "$OUTPUT" \
-      -J -l -iso-level 3 \
-      -e EFI/boot/bootx64.efi \
-      -no-emul-boot \
-      "$ISO_DIR"
-elif $BIOS_BOOT; then
-    echo "ISO BIOS only détectée"
-    xorriso -as mkisofs -r -V "Ubuntu-Auto" \
+      -J -l -cache-inodes -iso-level 3 \
+      -eltorito-alt-boot \
+         -e boot/grub/efi.img \
+         -no-emul-boot \
+      "$ISODIR"
+    ;;
+  "UEFI-bootx64")
+    echo "Attention: ISO Desktop moderne, pas de efi.img, construction UEFI-only..."
+    xorriso -as mkisofs \
+      -r -V "Ubuntu-Auto" \
       -o "$OUTPUT" \
-      -J -l -iso-level 3 -D \
-      -b isolinux/isolinux.bin \
-      -c isolinux/boot.cat \
-      -no-emul-boot -boot-load-size 4 -boot-info-table \
-      "$ISO_DIR"
-else
-    echo "Erreur : aucun boot détecté ! ISO invalide ?"
-    exit 1
-fi
+      -J -l -cache-inodes -iso-level 3 \
+      --efi-boot-part --efi-boot-image \
+      -eltorito-alt-boot \
+         -e EFI/boot/bootx64.efi \
+         -no-emul-boot \
+      "$ISODIR"
+    ;;
+esac
 
-echo "ISO automatisée créée : $OUTPUT"
+echo "ISO générée avec succès : $OUTPUT"
 
-# Nettoyage
 rm -rf "$WORKDIR"
-echo "Dossier temporaire supprimé."
