@@ -15,9 +15,7 @@ Téléchargez l’image ISO officielle :
 ## 🐧 Installation sous Linux
 
 ```
-╔════════════════════════════════╗
-║         ÉTAPES LINUX           ║
-╚════════════════════════════════╝
+
 ```
 
 ```bash
@@ -46,9 +44,7 @@ sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
 ## 🪟 Installation sous Windows
 
 ```
-╔════════════════════════════════╗
-║         ÉTAPES WINDOWS          ║
-╚════════════════════════════════╝
+
 ```
 
 ```powershell
