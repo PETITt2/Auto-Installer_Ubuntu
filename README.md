@@ -1,112 +1,101 @@
-##############################################################
-#                     🚀 AUTO INSTALLER UBUNTU               #
-##############################################################
+╔════════════════════════════════════╗
+║        🚀 AUTO INSTALLER UBUNTU     ║
+╚════════════════════════════════════╝
 
-Ce projet a été testé sur Ubuntu 24.04.xx
-Je ne garantis pas la compatibilité avec les versions antérieures ou ultérieures.
+Projet testé sur : Ubuntu 24.04.xx  
+⚠️ Compatibilité non garantie avec d'autres versions.
 
+──────────────────────────────────────────────
+              🧰  PRÉPARATIFS
+──────────────────────────────────────────────
 
-==============================================================
-                    🧰  PRÉPARATIFS
-==============================================================
+Téléchargez l’image ISO :
+→ https://ubuntu.com/download/desktop
 
-Téléchargez l’image ISO officielle :
-➡ https://ubuntu.com/download/desktop
+──────────────────────────────────────────────
+                 🐧  LINUX
+──────────────────────────────────────────────
 
+1. Installer mkisofs :
+   sudo apt install mkisofs -y
 
-==============================================================
-                        🐧  LINUX
-==============================================================
+2. Écrire l’image ISO sur une clé USB  
+   (via “Disques”, “dd”, etc.)
 
-1️⃣  Installer mkisofs :
-    sudo apt install mkisofs -y
+3. Extraire le projet ZIP
 
-2️⃣  Écrire l’image ISO sur une clé USB
-    (avec "Disques", "dd", ou un outil équivalent)
+4. Donner les droits d’exécution :
+   chmod +x autoinstallUbuntu.sh
 
-3️⃣  Extraire le .zip du projet
+5. Lancer le script :
+   sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
 
-4️⃣  Donner les permissions d’exécution :
-    chmod +x autoinstallUbuntu.sh
+💡 Astuces :
+- mkisofs doit être installé
+- Vérifiez le bon chemin de la clé
+- Assurez-vous qu’elle soit bien montée
 
-5️⃣  Lancer l’installation automatique :
-    sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
+──────────────────────────────────────────────
+                 🪟  WINDOWS
+──────────────────────────────────────────────
 
+1. Télécharger Rufus :
+   https://rufus.ie/
 
-_________________________________________________________
-|                                                       |
-|  🔧 mkisofs doit être installé avant l’exécution       |
-|  🧩 Remplacez /media/$USER/UBUNTU par le bon chemin    |
-|  💾 Assurez-vous que la clé est bien montée            |
-|_______________________________________________________|
+2. Écrire l’image ISO sur une clé USB
 
+3. Extraire le projet ZIP
 
-==============================================================
-                        🪟  WINDOWS
-==============================================================
+4. Ouvrir PowerShell en mode admin
 
-1️⃣  Télécharger Rufus :
-     https://rufus.ie/
+5. Lancer :
+   ./autoinstallUbuntu.ps1 -UsbDrive E:
 
-2️⃣  Écrire l’image ISO sur une clé USB avec Rufus
+⚠️ Remplacez “E:” par la lettre de votre clé USB.
 
-3️⃣  Extraire le projet ZIP
+──────────────────────────────────────────────
+       ⚙️  PERSONNALISATION DE L’INSTALLATION
+──────────────────────────────────────────────
 
-4️⃣  Ouvrir PowerShell en mode administrateur
+Les scripts créent un fichier :
+→ user-data
 
-5️⃣  Lancer la commande :
-     ./autoinstallUbuntu.ps1 -UsbDrive E:
+Modifiez-le pour ajuster vos paramètres :
+- utilisateurs
+- packages
+- configuration système
 
+⚠️ Une seule erreur rendra le fichier invalide.  
+Vérifiez-le avant exécution !
 
-_________________________________________
-|                                       |
-|  ⚠️ Remplacez "E:" par la lettre      |
-|  correspondant à votre clé USB.       |
-|_______________________________________|
+──────────────────────────────────────────────
+                🧭  GRUB.CFG
+──────────────────────────────────────────────
 
+Si vous doutez qu’il soit pris en compte :
+1. Au menu GRUB, pressez “E”
+2. Vérifiez le contenu affiché
+3. Confirmez que la bonne entrée est présente
 
-==============================================================
-          ⚙️  PERSONNALISATION DE L’INSTALLATION
-==============================================================
+──────────────────────────────────────────────
+               📚  DOCUMENTATION
+──────────────────────────────────────────────
 
-Les scripts créent automatiquement un fichier :
-    user-data
+Ubuntu Desktop :
+→ https://ubuntu.com/download/desktop
 
-👉 C’est ce fichier qu’il faut modifier pour personnaliser
-   l’installation (utilisateurs, paquets, paramètres, etc.)
+Autoinstall Reference :
+→ https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
 
-⚠️ ATTENTION :
-Une seule erreur dans user-data peut faire échouer
-l’installation complète.
-Vérifiez toujours la validité du fichier avant exécution.
+──────────────────────────────────────────────
+                 👤  AUTEUR
+──────────────────────────────────────────────
 
+Projet : Auto Installer Ubuntu  
+Auteur : PETITt2  
+But : Simplifier et automatiser l’installation  
+       d’Ubuntu depuis clé USB (Linux & Windows)
 
-==============================================================
-                    🧭  GRUB.CFG
-==============================================================
-
-Si vous avez un doute sur la prise en compte du fichier grub.cfg :
-
-1. Lorsque le menu GRUB s’affiche, pressez la touche **E**
-2. Le contenu du fichier GRUB sera affiché
-3. Vérifiez que votre boucle personnalisée est bien présente
-
-
-==============================================================
-                   📚  DOCUMENTATION
-==============================================================
-
-Documentation officielle Ubuntu :
-    https://ubuntu.com/download/desktop
-
-Référence Canonical Autoinstall :
-    https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
-
-(J’ai consulté d’autres sources, mais je n’ai plus les liens.)
-
-
-
-
-
-
-                                                                                          _PETITt2_
+──────────────────────────────────────────────
+✨  BONNE INSTALLATION & BON TEST ! ✨
+──────────────────────────────────────────────
