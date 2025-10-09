@@ -14,9 +14,6 @@ Téléchargez l’image ISO officielle :
 
 ## 🐧 Installation sous Linux
 
-```
-
-```
 
 ```bash
 # 1️⃣ Installer mkisofs
@@ -43,9 +40,7 @@ sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
 
 ## 🪟 Installation sous Windows
 
-```
 
-```
 
 ```powershell
 # 1️⃣ Télécharger Rufus :
