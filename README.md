@@ -104,20 +104,8 @@ Si vous avez un doute sur la prise en compte du fichier :
 > _D’autres sources ont été consultées lors du développement,  
 > mais leurs liens ne sont plus disponibles._
 
----
-
-## 👤 Auteur
-
-**Projet :** Auto Installer Ubuntu  
-**Créé par :** _PETITt2_  
-**But :** Automatiser et simplifier l’installation d’Ubuntu depuis clé USB (Linux & Windows)
-
----
-
-## ✨ Bon test et bonne installation !
-
 ```
-╔═════════════════════════════╗
-║   🧡  UBUNTU AUTO INSTALL   ║
-╚═════════════════════════════╝
+                                                                                                    ╔═════════════════════════════╗
+                                                                                                    ║   🧡            _PETITt2_   ║
+                                                                                                    ╚═════════════════════════════╝
 ```
