@@ -47,9 +47,7 @@ autoinstall:
       name: lvm
 
   # Étapes de configuration après l’installation principale
-  late-commands:
-    # Exemple : créer un fichier pour indiquer la fin d’installation
-    - curtin in-target --target=/target -- bash -c 'echo "Installation terminée avec succès" > /root/INSTALL_DONE.txt'
+
 
 EOF
 
