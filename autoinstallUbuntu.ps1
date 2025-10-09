@@ -45,10 +45,7 @@ autoinstall:
     layout:
       name: lvm
 
-  # Étapes de configuration après l’installation principale
-  late-commands:
-    # Exemple : créer un fichier pour indiquer la fin d’installation
-    - curtin in-target --target=/target -- bash -c 'echo "Installation terminée avec succès" > /root/INSTALL_DONE.txt'
+
 
 "@ | Out-File -Encoding utf8 "$AutoDir\user-data"
 
@@ -92,3 +89,4 @@ fi
 
 Write-Host "✅ Fichiers créés dans : $AutoDir" -ForegroundColor Green
 Write-Host "✅ grub.cfg mis à jour : $GrubPath" -ForegroundColor Green
+
