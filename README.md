@@ -1,101 +1,123 @@
-╔════════════════════════════════════╗
-║        🚀 AUTO INSTALLER UBUNTU     ║
-╚════════════════════════════════════╝
+# 🚀 AUTO INSTALLER UBUNTU
 
-Projet testé sur : Ubuntu 24.04.xx  
-⚠️ Compatibilité non garantie avec d'autres versions.
+> _Projet testé sur **Ubuntu 24.04.xx**._  
+> ⚠️ La compatibilité avec d'autres versions n'est pas garantie.
 
-──────────────────────────────────────────────
-              🧰  PRÉPARATIFS
-──────────────────────────────────────────────
+---
 
-Téléchargez l’image ISO :
-→ https://ubuntu.com/download/desktop
+## 🧰 PRÉPARATIFS
 
-──────────────────────────────────────────────
-                 🐧  LINUX
-──────────────────────────────────────────────
+Téléchargez l’image ISO officielle :  
+👉 [https://ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
 
-1. Installer mkisofs :
-   sudo apt install mkisofs -y
+---
 
-2. Écrire l’image ISO sur une clé USB  
-   (via “Disques”, “dd”, etc.)
+## 🐧 Installation sous Linux
 
-3. Extraire le projet ZIP
+```
+╔════════════════════════════════╗
+║         ÉTAPES LINUX           ║
+╚════════════════════════════════╝
+```
 
-4. Donner les droits d’exécution :
-   chmod +x autoinstallUbuntu.sh
+```bash
+# 1️⃣ Installer mkisofs
+sudo apt install mkisofs -y
 
-5. Lancer le script :
-   sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
+# 2️⃣ Écrire l’image ISO sur une clé USB
+# (via "Disques", "dd" ou un autre outil)
 
-💡 Astuces :
-- mkisofs doit être installé
-- Vérifiez le bon chemin de la clé
-- Assurez-vous qu’elle soit bien montée
+# 3️⃣ Extraire le .zip du projet
 
-──────────────────────────────────────────────
-                 🪟  WINDOWS
-──────────────────────────────────────────────
+# 4️⃣ Donner les droits d’exécution
+chmod +x autoinstallUbuntu.sh
 
-1. Télécharger Rufus :
-   https://rufus.ie/
+# 5️⃣ Lancer l’installation
+sudo ./autoinstallUbuntu.sh /media/$USER/UBUNTU
+```
 
-2. Écrire l’image ISO sur une clé USB
+💡 **Conseils :**
+- Assurez-vous que `mkisofs` est installé  
+- Vérifiez le bon chemin de la clé (`/media/$USER/UBUNTU`)  
+- La clé doit être montée avant d’exécuter le script
 
-3. Extraire le projet ZIP
+---
 
-4. Ouvrir PowerShell en mode admin
+## 🪟 Installation sous Windows
 
-5. Lancer :
-   ./autoinstallUbuntu.ps1 -UsbDrive E:
+```
+╔════════════════════════════════╗
+║         ÉTAPES WINDOWS          ║
+╚════════════════════════════════╝
+```
 
-⚠️ Remplacez “E:” par la lettre de votre clé USB.
+```powershell
+# 1️⃣ Télécharger Rufus :
+#    https://rufus.ie/
 
-──────────────────────────────────────────────
-       ⚙️  PERSONNALISATION DE L’INSTALLATION
-──────────────────────────────────────────────
+# 2️⃣ Écrire l’image ISO sur la clé USB avec Rufus
+
+# 3️⃣ Extraire le .zip du projet
+
+# 4️⃣ Ouvrir PowerShell en mode administrateur
+
+# 5️⃣ Lancer :
+./autoinstallUbuntu.ps1 -UsbDrive E:
+```
+
+⚠️ Remplacez `E:` par la lettre correspondant à votre clé USB.
+
+---
+
+## ⚙️ Personnaliser l’installation
 
 Les scripts créent un fichier :
-→ user-data
+```
+user-data
+```
 
-Modifiez-le pour ajuster vos paramètres :
-- utilisateurs
-- packages
-- configuration système
+Modifiez-le pour ajuster :
+- les utilisateurs  
+- les packages à installer  
+- les paramètres système  
 
-⚠️ Une seule erreur rendra le fichier invalide.  
-Vérifiez-le avant exécution !
+⚠️ **Attention** : une seule erreur dans `user-data` suffit à rendre le fichier invalide.  
+Vérifiez toujours sa syntaxe avant d’exécuter le script.
 
-──────────────────────────────────────────────
-                🧭  GRUB.CFG
-──────────────────────────────────────────────
+---
 
-Si vous doutez qu’il soit pris en compte :
-1. Au menu GRUB, pressez “E”
-2. Vérifiez le contenu affiché
-3. Confirmez que la bonne entrée est présente
+## 🧭 Vérifier le `grub.cfg`
 
-──────────────────────────────────────────────
-               📚  DOCUMENTATION
-──────────────────────────────────────────────
+Si vous avez un doute sur la prise en compte du fichier :
 
-Ubuntu Desktop :
-→ https://ubuntu.com/download/desktop
+1. Lorsque le menu **GRUB** s’affiche, pressez la touche **E**
+2. Le contenu du fichier sera affiché
+3. Vérifiez que la bonne configuration est bien présente
 
-Autoinstall Reference :
-→ https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+---
 
-──────────────────────────────────────────────
-                 👤  AUTEUR
-──────────────────────────────────────────────
+## 📚 Documentation utile
 
-Projet : Auto Installer Ubuntu  
-Auteur : PETITt2  
-But : Simplifier et automatiser l’installation  
-       d’Ubuntu depuis clé USB (Linux & Windows)
+- [Ubuntu Desktop Download](https://ubuntu.com/download/desktop)  
+- [Canonical Autoinstall Reference](https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html)
 
-──────────────────────────────────────────────
-✨  BONNE INSTALLATION & BON TEST ! ✨
-──────────────────────────────────────────────
+> _D’autres sources ont été consultées lors du développement,  
+> mais leurs liens ne sont plus disponibles._
+
+---
+
+## 👤 Auteur
+
+**Projet :** Auto Installer Ubuntu  
+**Créé par :** _PETITt2_  
+**But :** Automatiser et simplifier l’installation d’Ubuntu depuis clé USB (Linux & Windows)
+
+---
+
+## ✨ Bon test et bonne installation !
+
+```
+╔═════════════════════════════╗
+║   🧡  UBUNTU AUTO INSTALL   ║
+╚═════════════════════════════╝
+```
