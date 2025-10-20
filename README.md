@@ -8,7 +8,7 @@
 ## 🧰 PRÉPARATIFS
 
 Téléchargez l’image ISO officielle :  
-👉 [https://ubuntu.com/download/desktop](https://ubuntu.com/download/desktopdlllll)
+👉 [https://ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
 
 ---
 
